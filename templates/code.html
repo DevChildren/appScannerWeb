@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanning</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/dracula.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleCode.css') }}">
+</head>
+<body>
+    <div class="terminal-container">
+        <h1>Scanning...</h1>
+        <pre>
+            <code id="terminal-log" class="bash">
+                
+            </code>
+        </pre>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js" integrity="sha512-/+FfRimUS8E8g9aE4POp5UhFh/j8Rb5s2nvfsz7WbW1kmjPnyL8H17i7HJtIEuRtrf8n5FGn8H9rFjvP0iI4OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/scan');
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('start_scan', function(msg) {
+            console.log('Scanning started:', msg.message);
+        });
+
+        socket.on('scan_result', function(msg) {
+            console.log('Scan result:', msg.scann);
+        });
+
+        // Tangkap pesan 'scan_log' dari server dan tampilkan di halaman
+        socket.on('scan_log', function(msg) {
+            var terminalLog = document.getElementById('terminal-log');
+            var logItem = document.createElement('div');
+            logItem.textContent = msg.log;  // Sesuaikan dengan struktur pesan yang dikirim dari server
+            terminalLog.appendChild(logItem);
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Mengabaikan file Python bytecode
+*.pyc
+
+# Mengabaikan direktori cache
+__pycache__/
+Syber/__pycache__/
+static/__pycache__/
+assets/
+.gitignore/
+
+script.js
+styleCode.css

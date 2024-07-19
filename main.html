@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Vulnerability Scanner</title>
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <style>
+        .log-container {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .log-item {
+            margin-bottom: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+        .log-item.error {
+            color: red;
+        }
+        .log-item.info {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="center-align">Web Vulnerability Scanner</h1>
+        <div class="row">
+            <div class="input-field col s10">
+                <input type="text" id="url" placeholder="Enter URL to scan" class="validate">
+                <label for="url">URL</label>
+            </div>
+            <div class="col s2">
+                <button onclick="startScan()" class="btn waves-effect waves-light">Start Scan</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 log-container">
+                <textarea id="log" class="materialize-textarea" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var socket = io('/scan');
+
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        function startScan() {
+            var url = document.getElementById('url').value;
+            document.getElementById('log').value = ''; // Clear previous logs
+            socket.emit('start_scan', {url: url});
+        }
+
+        socket.on('scan_log', function(data) {
+            var logElement = document.createElement('div');
+            logElement.textContent = data.log;
+            logElement.classList.add('log-item');
+            if (data.log.includes('Error')) {
+                logElement.classList.add('error');
+            } else {
+                logElement.classList.add('info');
+            }
+            document.getElementById('log').appendChild(logElement);
+            // Scroll to bottom
+            document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+        });
+
+        socket.on('scan_complete', function(data) {
+            M.toast({html: 'Scan complete! Check the logs for details.', classes: 'rounded'});
+        });
+
+        socket.on('scan_error', function(data) {
+            M.toast({html: 'Error: ' + data.error, classes: 'rounded red'});
+        });
+    </script>
+</body>
+</html>

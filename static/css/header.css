@@ -1,0 +1,43 @@
+header {
+    background: linear-gradient(to right, rgb(48,114,42), #4a90e2);
+    color: white;
+    text-align: center;
+    padding: 50px 0;
+}
+header h1 img {
+  max-width: 30px;
+  max-height: 30px;
+  margin: 0 1rem;
+}
+nav {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 1rem;
+  z-index: 9997;
+  backdrop-filter: blur(20px);
+  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav ul li {
+  margin: 0 20px;
+  text-align: center;
+}
+
+nav ul li a i{
+  color: #333;
+}
+nav ul li a {
+  text-decoration: none;
+  color: #333;
+  margin: 0 10px;
+}

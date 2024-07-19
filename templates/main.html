@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripting Zone</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:5000/scan');
+
+        socket.on('connect', function() {
+            console.log('Terhubung ke server');
+        });
+
+        socket.on('scan_log', function(data) {
+            console.log('Log diterima: ', data.log);
+            var terminalLog = document.getElementById('terminal-log');
+            var newLog = document.createElement('div');
+            newLog.textContent = data.log;
+            terminalLog.appendChild(newLog);
+
+            terminalLog.scrollTop = terminalLog.scrollHeight;
+        });
+
+        socket.on('start_scan', function(data) {
+            console.log('Pesan mulai scan: ', data.message);
+            var terminalLog = document.getElementById('terminal-log');
+            var newLog = document.createElement('div');
+            newLog.textContent = data.message;
+            terminalLog.appendChild(newLog);
+
+            terminalLog.scrollTop = terminalLog.scrollHeight;
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="overlay"></div>
+    <header>
+        <h1><img class="img-logo" src="{{ url_for('static', filename='img/de.png')}}">Scripting Zone</h1>
+    </header>
+    <nav>
+        <i id="menu" class="material-icons">dialpad</i>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <div id="sidebar" class="baner">
+        <div class="sidebar-header">
+            <img class="background" src="{{ url_for('static', filename='img/de.png')}}" alt="background" />
+        </div>
+        <ul class="menu">
+            <li><a href="#"><i class="material-icons">css</i></a></li>
+            <li><a href="#"><i class="material-icons">javascript</i></a></li>
+            <li><a href="#"><i class="material-icons">php</i></a></li>
+            <li><a href="#"><i class="material-icons">css</i></a></li>
+            <li><a href="#"><i class="material-icons">php</i></a></li>
+        </ul>
+    </div>
+    <main>
+        <section>
+            <div class="card">
+                <h2>Tools Scanning</h2>
+                <p></p>
+                <div class="form-container">
+                    <form class="scanning" action="/scanning" method="POST" accept-charset="utf-8">
+                        <input type="text" id="url" name="scanning" placeholder="Your URL for scanning...">
+                        <input class="hidden" id="submit" type="submit" value="Scan">
+                    </form>
+                </div>
+            </div>
+        
+            <div class="terminal-container">
+                <h1>Scanning...</h1>
+                <pre>
+                    <code id="terminal-log" class="bash"></code>
+                </pre>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <p class="show" id="copyright">&copy; 2024 Scripting Zone</p>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/5.3.6/socket.io.js" integrity="sha512-/+FfRimUS8E8g9aE4POp5UhFh/j8Rb5s2nvfsz7WbW1kmjPnyL8H17i7HJtIEuRtrf8n5FGn8H9rFjvP0iI4OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        const menu = document.getElementById('menu');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.overlay');
+        const input = document.getElementById('url');
+        const submit = document.getElementById('submit');
+        const copyright = document.getElementById('copyright');
+        const footer = document.querySelector('.footer');
+
+        input.addEventListener('input', (e) => {
+            if (e.target.value.length > 0) {
+                submit.classList.remove('hidden');
+                submit.classList.add('show');
+                copyright.classList.add('hidden');
+                footer.style.backgroundColor="transparent";
+            } else {
+                submit.classList.remove('show');
+                submit.classList.add('hidden');
+                copyright.classList.remove('hidden');
+                footer.style.backgroundColor="#333";
+            }
+        });
+
+        menu.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
